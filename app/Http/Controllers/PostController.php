@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -13,7 +15,8 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return view('post.index', ['posts' => $posts]);
+        $comments = Comment::all();
+        return view('post.index', ['posts' => $posts, 'comments' => $comments]);
     }
 
     /**
@@ -42,6 +45,8 @@ class PostController extends Controller
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('images', 'public');
         }
+
+        $post->image_path = $path;
 
         $post->save();
 
@@ -72,10 +77,24 @@ class PostController extends Controller
         //
     }
 
+    public function comment(Request $request, Post $post) {
+
+        $request->validate([
+            'comment' => 'required|string|max:255'
+        ]);
+
+        $post->comment()->create([
+            'content' => $request->comment,
+            'user_id' => $request->user()->id
+        ]);
+
+        return redirect()->route('posts.index')->with('success', 'Comment added seccessfully.');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy()
+    public function destroy(Post $post)
     {
         $post->delete();
         if ($post->image_path) {
