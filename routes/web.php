@@ -20,7 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
-    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::get('/posts/{post}/show', [PostController::class, 'show']);
+    Route::delete('/comments/{comment}/delete', [PostController::class, 'destroyComment'])->name('posts.destroy');
+
+
     Route::post('/posts/{post}', [PostController::class, 'comment']);
 });
 

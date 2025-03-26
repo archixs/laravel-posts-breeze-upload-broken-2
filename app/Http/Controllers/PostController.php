@@ -58,7 +58,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('post.show', ['post' => $post]);
     }
 
     /**
@@ -77,7 +77,8 @@ class PostController extends Controller
         //
     }
 
-    public function comment(Request $request, Post $post) {
+    public function comment(Request $request, Post $post)
+    {
 
         $request->validate([
             'comment' => 'required|string|max:255'
@@ -101,5 +102,12 @@ class PostController extends Controller
             Storage::disk('public')->delete($post->image_path);
         }
         return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+    }
+
+    public function destroyComment(Comment $comment) {
+
+        $comment->delete();
+
+        return redirect()->route('posts.index')->with('success', 'Comment deleted successfully.');
     }
 }

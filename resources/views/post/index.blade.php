@@ -36,10 +36,18 @@
                                 <h4 class="text-lg font-medium text-gray-800 dark:text-gray-200">Comments</h4>
                                 <div class="space-y-2 mt-2">
                                     @foreach($comments as $comment)
-                                    @if ($comment->post_id == $post->id)
-                                    <p class="text-gray-700 dark:text-gray-300">{{ $comment->content }} By: {{ $comment->user->name }}</p>
+                                        @if ($comment->post_id == $post->id)
+                                            <p class="text-gray-700 dark:text-gray-300">{{ $comment->content }} By: {{ $comment->user->name }}</p>
 
-                                    @endif
+                                            @if(auth()->user()->id == $comment->user_id || auth()->user()->id == $comment->user->id)
+                                            
+                                                <form action="/comments/{{ $comment->id }}/delete" method="POST" class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-semibold transition duration-200">Delete</button>
+                                                </form>
+                                            @endif
+                                        @endif
                                     @endforeach
                                 </div>
                             </div>
@@ -53,6 +61,8 @@
                                 </form>
                             </div>
 
+                            <a href="/posts/{{ $post->id }}/show">Show</a>
+                            
                             <!-- Post Delete Button -->
                             <div class="mt-4 text-right">
                                 <form action="/posts/{{ $post->id }}" method="post" class="inline-block">
